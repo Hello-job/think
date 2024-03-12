@@ -36,9 +36,9 @@ const Page: NextPage = () => {
           <div className={styles.content}>
             <div>
               <div>
-                <Title style={{ marginBottom: 12 }}>云策文档</Title>
+                <Title style={{ marginBottom: 12 }}>极星文档</Title>
                 <Paragraph type="tertiary">
-                  云策文档是一款开源知识管理工具。通过独立的知识库空间，结构化地组织在线协作文档，实现知识的积累与沉淀，促进知识的复用与流通。
+                  极星文档是一款开源知识管理工具。通过独立的知识库空间，结构化地组织在线协作文档，实现知识的积累与沉淀，促进知识的复用与流通。
                 </Paragraph>
               </div>
               <div style={{ margin: '32px 0' }}>

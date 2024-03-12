@@ -34,33 +34,7 @@ export const AppRouterHeader: React.FC = () => {
         text: '主页',
         onClick: () => {
           Router.push({
-            pathname: `/app/org/${organizationId}`,
-          });
-        },
-      },
-      {
-        itemKey: 'recent',
-        text: <Recent />,
-      },
-      {
-        itemKey: '/app/org/[organizationId]/wiki',
-        text: <Wiki />,
-      },
-      {
-        itemKey: '/app/org/[organizationId]/star',
-        text: '星标',
-        onClick: () => {
-          Router.push({
-            pathname: `/app/org/${organizationId}/star`,
-          });
-        },
-      },
-      {
-        itemKey: '/app/org/[organizationId]/setting',
-        text: '设置',
-        onClick: () => {
-          Router.push({
-            pathname: `/app/org/${organizationId}/setting`,
+            pathname: `/app/org/${organizationId}/wiki`,
           });
         },
       },
@@ -76,7 +50,6 @@ export const AppRouterHeader: React.FC = () => {
           style={{ overflow: 'auto' }}
           header={
             <Space>
-              <OrganizationSwitcher key={organizationId} />
               <RecentModal visible={recentModalVisible} toggleVisible={toggleRecentModalVisible} />
               <WikiModal visible={wikiModalVisible} toggleVisible={toggleWikiModalVisible} />
               <Dropdown

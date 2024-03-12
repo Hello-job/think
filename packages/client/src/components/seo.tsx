@@ -6,7 +6,7 @@ interface IProps {
   needTitleSuffix?: boolean;
 }
 
-const buildTitle = (title) => `${title} - 云策文档`;
+const buildTitle = (title) => `${title} - 极星文档`;
 
 export const Seo: React.FC<IProps> = ({ title, needTitleSuffix = true }) => {
   useEffect(() => {

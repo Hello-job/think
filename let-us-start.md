@@ -1,4 +1,4 @@
-# think
+# 极星文档 （fork from think ）
 
 ## 项目结构
 
@@ -17,7 +17,7 @@
 - nodejs >=16.5.0：推荐使用 nvm 安装
 - pnpm：安装 nodejs 后，运行 `npm i -g pnpm` 即可安装
 - pm2：安装 nodejs 后，运行 `npm i -g pm2` 即可安装
-- MySQL 5.7
+- MySQL 8.0
 - Redis
 
 ## 配置文件
@@ -41,9 +41,9 @@
 首先安装 `MySQL` 和 `Redis`，推荐使用 docker 进行安装。
 
 ```bash
-docker image pull mysql:5.7
-# m1 的 mac 可以用：docker image pull --platform linux/x86_64 mysql:5.7
-docker run -d --restart=always --name mysql-for-think-dev -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -e MYSQL_USER=think -e MYSQL_PASSWORD=think -e MYSQL_DATABASE=think mysql:5.7 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+docker image pull mysql:8.0
+# m1 的 mac 可以用：docker image pull --platform linux/x86_64 mysql:8.0
+docker run -d --restart=always --name mysql-for-think-dev -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -e MYSQL_USER=think -e MYSQL_PASSWORD=think -e MYSQL_DATABASE=think mysql:8.0 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
 docker pull redis:latest
 docker run --name redis-for-think-dev -p 6379:6379 -d redis --appendonly yes --requirepass "root"
@@ -52,8 +52,8 @@ docker run --name redis-for-think-dev -p 6379:6379 -d redis --appendonly yes --r
 2. 安装依赖并运行
 
 ```bash
-git clone  https://github.com/fantasticit/think.git
-cd think
+git clone  https://github.com/star-table/starnote.git
+cd starnote
 pnpm install
 pnpm run dev
 ```
@@ -65,8 +65,8 @@ pnpm run dev
 **编译打包过程比较吃内存（大约 2G），小内存服务器建议本地构建后上传，可以在配置文件完成后，运行 build-output.sh，将打包后的 output 压缩发送到服务器后运行**。
 
 ```bash
-git clone  https://github.com/fantasticit/think.git
-cd think
+git clone  https://github.com/star-table/starnote.git
+cd starnote
 pnpm install # 安装依赖
 pnpm run build # 项目打包
 
@@ -78,7 +78,7 @@ pm2 save
 
 #### swc 导致打包失败
 
-要么根据报错安装相关系统环境依赖，要么在`think/packages/client`目录下加入 **.babelrc** 文件。
+要么根据报错安装相关系统环境依赖，要么在`starnote/packages/client`目录下加入 **.babelrc** 文件。
 
 文件内容：
 
@@ -94,12 +94,12 @@ pm2 save
 
 ```bash
 # 首次安装
-git clone https://github.com/fantasticit/think.git
-cd think
+git clone https://github.com/star-table/starnote.git
+cd starnote
 docker-compose up -d
 
 # 二次更新升级
-cd think
+cd starnote
 git pull
 docker-compose build
 docker-compose up -d
@@ -107,7 +107,7 @@ docker-compose up -d
 # 如果二次更新有问题
 docker-compose kill
 docker-compose rm
-docker image rm think # 删掉构建的镜像
+docker image rm starnote # 删掉构建的镜像
 docker-compose up -d
 ```
 
@@ -115,11 +115,11 @@ docker-compose up -d
 
 ### nginx 配置参考
 
-无论以何种方式进行项目部署，项目运行成功后会在 3 个端口启动服务（默认 5001、5002、5003，具体由配置文件决定）。`nginx` 配置参考 <[think/nginx.conf.sample](https://github.com/fantasticit/think/blob/main/nginx.conf.sample)>。
+无论以何种方式进行项目部署，项目运行成功后会在 3 个端口启动服务（默认 5001、5002、5003，具体由配置文件决定）。`nginx` 配置参考 <[starnote/nginx.conf.sample](https://github.com/star-table/starnote/blob/main/nginx.conf.sample)>。
 
 特别强调，在 `config` 文件夹的配置中 `client.siteUrl` 一定要配置正确，否则客户端可能无法正常运行。
 
 ```yaml
-# 站点地址（如：http://think.codingit.cn/），一定要设置，否则会出现 cookie、跨域等问题
+# 站点地址（如：http://app.startable.cn/），一定要设置，否则会出现 cookie、跨域等问题
 siteUrl: 'http://localhost:5001'
 ```

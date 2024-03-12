@@ -41,7 +41,7 @@ export class VerifyService {
     await this.redis.set(`verify-${email}`, verifyCode, 'EX', 5 * 60);
     await this.systemService.sendEmail({
       to: email,
-      subject: '云策文档-验证码',
+      subject: '极星文档-验证码',
       html: `<p>您的验证码为 ${verifyCode}</p>`,
     });
   };

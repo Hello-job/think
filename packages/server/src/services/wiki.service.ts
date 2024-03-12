@@ -603,7 +603,6 @@ export class WikiService {
       relations.map(async (relation) => {
         const { id, parentDocumentId, index } = relation;
         const doc = await this.documentService.documentRepo.findOne(id);
-
         if (doc) {
           const newData = await this.documentService.documentRepo.merge(doc, {
             parentDocumentId,

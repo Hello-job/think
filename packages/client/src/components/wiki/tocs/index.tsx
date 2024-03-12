@@ -36,7 +36,7 @@ export const WikiTocs: React.FC<IProps> = ({
 }) => {
   const { pathname, query } = useRouter();
   const { data: wiki, loading: wikiLoading, error: wikiError } = useWikiDetail(wikiId);
-  const { data: tocs, loading: tocsLoading, error: tocsError } = useWikiTocs(wikiId);
+  const { data: tocs, loading: tocsLoading, error: tocsError, update } = useWikiTocs(wikiId);
   const { data: starWikis } = useStarWikisInOrganization(query.organizationId);
   const {
     data: starDocuments,
@@ -306,7 +306,7 @@ export const WikiTocs: React.FC<IProps> = ({
             loading={tocsLoading}
             error={tocsError}
             normalContent={() => (
-              <Tree needAddDocument data={tocs || []} docAsLink={docAsLink} getDocLink={getDocLink} />
+              <Tree needAddDocument data={tocs || []} update={update} docAsLink={docAsLink} getDocLink={getDocLink} />
             )}
           />
         </div>

@@ -80,7 +80,7 @@ let scrollTimer;
 
 const inheritColorStyle = { color: 'inherit' };
 
-export const _Tree = ({ data, docAsLink, getDocLink, isShareMode = false, needAddDocument = false }) => {
+export const _Tree = ({ data, docAsLink, getDocLink, isShareMode = false, needAddDocument = false, update }) => {
   const { query } = useRouter();
   const $container = useRef<HTMLDivElement>(null);
   const [expandedKeys, setExpandedKeys] = useState([]);
@@ -130,16 +130,75 @@ export const _Tree = ({ data, docAsLink, getDocLink, isShareMode = false, needAd
     };
   }, [query.documentId]);
 
+  const handleDrop = (info) => {
+    const { dropToGap, node, dragNode } = info;
+    const dropKey = node.key;
+    const dragKey = dragNode.key;
+    const dropPos = node.pos.split('-');
+    const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
+
+    const _data = [...data];
+    const loop = (data, key, callback) => {
+      data.forEach((item, ind, arr) => {
+        if (item.key === key) return callback(item, ind, arr);
+        if (item.children) return loop(item.children, key, callback);
+      });
+    };
+    let dragObj;
+    loop(_data, dragKey, (item, ind, arr) => {
+      arr.splice(ind, 1);
+      dragObj = item;
+    });
+
+    if (!dropToGap) {
+      // inset into the dropPosition
+      loop(_data, dropKey, (item, ind, arr) => {
+        item.children = item.children || [];
+        item.children.push(dragObj);
+      });
+    } else if (dropPosition === 1 && node.children && node.expanded) {
+      // has children && expanded and drop into the node bottom gap
+      // insert to the top
+      loop(_data, dropKey, (item) => {
+        item.children = item.children || [];
+        item.children.unshift(dragObj);
+      });
+    } else {
+      let dropNodeInd;
+      let dropNodePosArr;
+      loop(_data, dropKey, (item, ind, arr) => {
+        dropNodePosArr = arr;
+        dropNodeInd = ind;
+      });
+      if (dropPosition === -1) {
+        // insert to top
+        dropNodePosArr.splice(dropNodeInd, 0, dragObj);
+      } else {
+        // insert to bottom
+        dropNodePosArr.splice(dropNodeInd + 1, 0, dragObj);
+      }
+    }
+    const newData = _data.map((item, index) => {
+      return {
+        ...item,
+        index: index + 1,
+      };
+    });
+    update(newData);
+  };
+
   return (
     <div className={styles.treeInnerWrap} ref={$container}>
       <SemiTree
         treeData={data}
+        draggable
         renderLabel={renderLabel}
         value={query.documentId}
         defaultExpandedKeys={expandedKeys}
         expandedKeys={expandedKeys}
         onExpand={setExpandedKeys}
         motion={false}
+        onDrop={handleDrop}
       />
       {needAddDocument && <AddDocument />}
     </div>

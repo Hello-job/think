@@ -3,8 +3,8 @@ services:
   think:
     build:
       context: .
-    image: think
-    container_name: think
+    image: startable-note
+    container_name: note
     volumes:
       - ./config:/app/config
       - ./runtime/static:/app/packages/server/static
@@ -18,11 +18,11 @@ services:
       - mysql
       - redis
     networks:
-      - think
+      - startable
   mysql:
     image: mysql:5.7
     restart: always
-    container_name: mysql-for-think
+    container_name: mysql-for-startable-note
     volumes:
       - ./runtime/mysql:/var/lib/mysql
     environment:
@@ -39,11 +39,11 @@ services:
       - '--character-set-server=utf8mb4'
       - '--collation-server=utf8mb4_unicode_ci'
     networks:
-      - think
+      - startable
   redis:
     image: redis:latest
     restart: always
-    container_name: redis-for-think
+    container_name: redis-for-startable-note
     command: >
       --requirepass root
     expose:
@@ -54,7 +54,7 @@ services:
       - ./runtime/redis:/data
     privileged: true
     networks:
-      - think
+      - startable
 networks:
-  think:
+  startable:
     driver: bridge

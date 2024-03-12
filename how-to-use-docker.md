@@ -1,6 +1,6 @@
 # 使用 docker-compose 进行项目部署
 
-> 目标：使用 http://dev.think.codingit.cn 访问客户端；使用 http://dev.api.codingit.cn 访问服务端。
+> 目标：使用 http://dev.note.startable.cn 访问客户端；使用 http://dev.note-api.startable.cn 访问服务端。
 
 ## 1. 新建 config/prod.yaml
 
@@ -9,16 +9,16 @@
 client:
   port: 5001
   assetPrefix: '/'
-  apiUrl: 'http://dev.api.codingit.cn/api'
-  collaborationUrl: 'ws://dev.api.codingit.cn/think/wss'
+  apiUrl: 'http://dev.note-api.startable.cn/api'
+  collaborationUrl: 'ws://dev.note-api.startable.cn/note/wss'
   # 以下为页面 meta 配置
-  seoAppName: '云策文档'
-  seoDescription: '云策文档是一款开源知识管理工具。通过独立的知识库空间，结构化地组织在线协作文档，实现知识的积累与沉淀，促进知识的复用与流通。'
-  seoKeywords: '云策文档,协作,文档,fantasticit,https://github.com/fantasticit/think'
+  seoAppName: 极星文档'
+  seoDescription: '极星文档是一款开源知识管理工具。通过独立的知识库空间，结构化地组织在线协作文档，实现知识的积累与沉淀，促进知识的复用与流通。'
+  seoKeywords: '极星文档,协作,文档,fantasticit,https://github.com/fantasticit/think'
   # 预先连接的来源，空格分割（比如图片存储服务器）
   dnsPrefetch: '//wipi.oss-cn-shanghai.aliyuncs.com'
-  # 站点地址（如：http://think.codingit.cn/），一定要设置，否则会出现 cookie、跨域等问题
-  siteUrl: 'http://dev.think.codingit.cn'
+  # 站点地址（如：http://note.startable.cn/），一定要设置，否则会出现 cookie、跨域等问题
+  siteUrl: 'http://dev.note.startable.cn'
   siteDomain: ''
 
 server:
@@ -60,8 +60,8 @@ db:
 oss:
   local:
     enable: true
-    # 线上更改为服务端地址（如：https://api.codingit.cn）
-    server: 'http://dev.api.codingit.cn'
+    # 线上更改为服务端地址（如：https://note-api.startable.cn）
+    server: 'http://dev.note-api.startable.cn'
   # 以下为各厂商 sdk 配置，不要修改字段，填入值即可
   tencent:
     enable: false
@@ -88,7 +88,7 @@ jwt:
 ## 2. 新建 nginx.conf
 
 ```shell
-upstream think_client {
+upstream note_client {
   server 127.0.0.1:5001;
   keepalive 64;
 }
@@ -105,7 +105,7 @@ upstream think_wss {
 
 server {
   listen 80;
-  server_name dev.api.codingit.cn;
+  server_name dev.note-api.startable.cn;
 
   client_max_body_size 100m;
 
@@ -142,7 +142,7 @@ server {
 
 server {
   listen 80;
-  server_name dev.think.codingit.cn;
+  server_name dev.note.startable.cn;
 
   location / {
     proxy_http_version 1.1;
@@ -152,7 +152,7 @@ server {
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header X-Nginx-Proxy true;
     proxy_cache_bypass $http_upgrade;
-    proxy_pass http://think_client;
+    proxy_pass http://note_client;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
   }
@@ -169,10 +169,10 @@ docker-compose up -d
 4. 可选：配置 hosts
 
 ```shell
-127.0.0.1 dev.api.codingit.cn
-127.0.0.1 dev.think.codingit.cn
+127.0.0.1 dev.note-api.startable.cn
+127.0.0.1 dev.note.startable.cn
 ```
 
 5. 访问
 
-浏览器访问：http://dev.think.codingit.cn。
+浏览器访问：http://dev.note.startable.cn。

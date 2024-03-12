@@ -3,12 +3,14 @@ import React from 'react';
 import { List, TabPane, Tabs, Typography } from '@douyinfe/semi-ui';
 
 import { WikiApiDefinition } from '@think/domains';
+import { StarApiDefinition } from '@think/domains';
 
 import { DataRender } from 'components/data-render';
 import { Empty } from 'components/empty';
 import { Seo } from 'components/seo';
 import { WikiCard, WikiCardPlaceholder } from 'components/wiki/card';
 import { WikiCreator } from 'components/wiki-creator';
+import { getStarWikisInOrganization, useStarWikisInOrganization } from 'data/star';
 import { getAllWikis, getJoinWikis, getOwnWikis, useAllWikis, useJoinWikis, useOwnWikis } from 'data/wiki';
 import { useRouterQuery } from 'hooks/use-router-query';
 import { CreateWikiIllustration } from 'illustrations/create-wiki';
@@ -61,7 +63,40 @@ const Wikis = ({ hook }) => {
     />
   );
 };
+const StarWikis = () => {
+  const { organizationId } = useRouterQuery<{ organizationId: string }>();
+  const { data, loading, error } = useStarWikisInOrganization(organizationId);
 
+  return (
+    <DataRender
+      loading={loading}
+      loadingContent={() => (
+        <List
+          grid={grid}
+          dataSource={[1, 2, 3]}
+          renderItem={() => (
+            <List.Item>
+              <WikiCardPlaceholder />
+            </List.Item>
+          )}
+        />
+      )}
+      error={error}
+      normalContent={() => (
+        <List
+          grid={grid}
+          dataSource={data}
+          renderItem={(wiki) => (
+            <List.Item>
+              <WikiCard wiki={wiki} />
+            </List.Item>
+          )}
+          emptyContent={<Empty message={'收藏的知识库会出现在此处'} />}
+        />
+      )}
+    />
+  );
+};
 const Page: NextPage = () => {
   return (
     <AppSingleColumnLayout>
@@ -70,6 +105,9 @@ const Page: NextPage = () => {
         <Title heading={3} style={{ margin: '8px 0' }}>
           知识库
         </Title>
+
+        <Title style={{ fontSize: '14px', margin: '8px 0' }}>收藏</Title>
+        <StarWikis />
         <Tabs type="button" style={{ marginTop: 24 }}>
           <TabPane tab="全部" itemKey="all">
             <Wikis hook={useAllWikis} />
@@ -93,6 +131,10 @@ Page.getInitialProps = async (ctx) => {
     { url: WikiApiDefinition.getAllWikis.client(organizationId), action: (cookie) => getAllWikis(cookie) },
     { url: WikiApiDefinition.getJoinWikis.client(organizationId), action: (cookie) => getJoinWikis(cookie) },
     { url: WikiApiDefinition.getOwnWikis.client(organizationId), action: (cookie) => getOwnWikis(cookie) },
+    {
+      url: StarApiDefinition.getStarWikisInOrganization.client(organizationId),
+      action: (cookie) => getStarWikisInOrganization(organizationId, cookie),
+    },
   ]);
   return props;
 };
