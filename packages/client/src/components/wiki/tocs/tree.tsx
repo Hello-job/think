@@ -29,7 +29,7 @@ const Actions = ({ node }) => {
     <span className={styles.right}>
       <DocumentActions
         key={node.id}
-        hoverVisible
+        // hoverVisible
         organizationId={node.organizationId}
         wikiId={node.wikiId}
         documentId={node.id}
@@ -38,7 +38,7 @@ const Actions = ({ node }) => {
         hideDocumentStyle
       ></DocumentActions>
       <Button
-        className={styles.hoverVisible}
+        // className={styles.hoverVisible}
         onClick={createDocument}
         type="tertiary"
         theme="borderless"
@@ -130,6 +130,10 @@ export const _Tree = ({ data, docAsLink, getDocLink, isShareMode = false, needAd
     };
   }, [query.documentId]);
 
+  /**
+   * 拖拽排序
+   * @param info
+   */
   const handleDrop = (info) => {
     const { dropToGap, node, dragNode } = info;
     const dropKey = node.key;
@@ -154,36 +158,57 @@ export const _Tree = ({ data, docAsLink, getDocLink, isShareMode = false, needAd
       // inset into the dropPosition
       loop(_data, dropKey, (item, ind, arr) => {
         item.children = item.children || [];
-        item.children.push(dragObj);
+        item.children.push({
+          ...dragObj,
+          parentDocumentId: item.id,
+        });
       });
     } else if (dropPosition === 1 && node.children && node.expanded) {
       // has children && expanded and drop into the node bottom gap
       // insert to the top
       loop(_data, dropKey, (item) => {
         item.children = item.children || [];
-        item.children.unshift(dragObj);
+        item.children.unshift({
+          ...dragObj,
+          parentDocumentId: item.id,
+        });
       });
     } else {
       let dropNodeInd;
       let dropNodePosArr;
+      let parentDocument;
       loop(_data, dropKey, (item, ind, arr) => {
+        parentDocument = item;
         dropNodePosArr = arr;
         dropNodeInd = ind;
       });
       if (dropPosition === -1) {
         // insert to top
-        dropNodePosArr.splice(dropNodeInd, 0, dragObj);
+        dropNodePosArr.splice(dropNodeInd, 0, {
+          ...dragObj,
+          parentDocumentId: parentDocument.parentDocumentId,
+        });
       } else {
         // insert to bottom
-        dropNodePosArr.splice(dropNodeInd + 1, 0, dragObj);
+        dropNodePosArr.splice(dropNodeInd + 1, 0, {
+          ...dragObj,
+          parentDocumentId: parentDocument.parentDocumentId,
+        });
       }
     }
-    const newData = _data.map((item, index) => {
-      return {
-        ...item,
-        index: index + 1,
-      };
-    });
+    let Index = 1;
+    const loopSort = (list, index) => {
+      list.forEach((item) => {
+        item.index = String(Index);
+        const child = item.children;
+        if (child.length) {
+          loopSort(child, Index);
+        }
+        Index++;
+      });
+      return list;
+    };
+    const newData = loopSort(_data, Index);
     update(newData);
   };
 

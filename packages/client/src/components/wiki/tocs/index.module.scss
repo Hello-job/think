@@ -103,6 +103,16 @@
       align-items: center;
       width: calc(100% - 48px);
     }
+
+    &:hover{
+      .right{
+        opacity: 1;
+      }
+    }
+
+    .right{
+      opacity: 0;
+    }
   }
 }
 

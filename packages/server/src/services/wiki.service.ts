@@ -599,8 +599,8 @@ export class WikiService {
   public async orderWikiTocs(relations: Array<{ id: string; parentDocumentId?: string; index: number }>) {
     if (!relations.length) return;
 
-    await Promise.all(
-      relations.map(async (relation) => {
+    const loop = (list) => {
+      return list.map(async (relation) => {
         const { id, parentDocumentId, index } = relation;
         const doc = await this.documentService.documentRepo.findOne(id);
         if (doc) {
@@ -609,9 +609,14 @@ export class WikiService {
             index,
           });
           await this.documentService.documentRepo.save(newData);
+
+          if (relation.children) {
+            loop(relation.children);
+          }
         }
-      })
-    );
+      });
+    };
+    await Promise.all(loop(relations));
   }
 
   /**
