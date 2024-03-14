@@ -8,6 +8,12 @@
   margin-left: auto;
 }
 
+.my-comment{
+  border-bottom: 2px solid #ffc60a;
+  --tw-border-opacity: 1;
+  --tw-bg-opacity: 1;
+}
+
 @media (max-width: 768px) {
   .container {
     width: 100%;

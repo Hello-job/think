@@ -1,0 +1,248 @@
+.commentWrap{
+  position: absolute;
+  top: 110px;
+  right: 0px;
+  height: 100%;
+}
+
+
+.userInfo{
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  .nameText{
+    font-weight: 600;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .name2{
+    font-size: 12px;
+    color: #a0aec0;
+  }
+}
+
+.textComment {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  min-height: 100%;
+  border-style: solid;
+  border-color: #dddede;
+  border-width: 0px 0px 0px 1px;
+  z-index: 1;
+  transition: transform 0.3s ease 0s;
+  transform: translateX(0px);
+  visibility: visible;
+  background-color: white;
+
+  .header{
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #dddede;
+
+    .foldIcon{
+      cursor: pointer;
+    }
+  }
+
+  .container{
+     width: 295px;
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     .commentItem{
+      width: 270px;
+      line-height: 1.5;
+      border-radius: 6px;
+      background-color: white;
+      border: 1px solid #dddede;
+      cursor: pointer;
+      padding: 10px;
+
+      margin: 20px 0;
+      position: relative;
+
+      .selectText{
+        user-select: none;
+        -webkit-box-flex: 1;
+        -ms-flex: 1;
+        flex: 1;
+        position: relative;
+        max-height: 21px;
+        color:  #7b8087;
+        font-size: 12px;
+        line-height: 20px;
+        margin: 8px 0;
+        overflow: hidden;
+        white-space: nowrap;
+        display: block;
+        &::before{
+          content: '';
+          display: inline-block;
+          width: 2px;
+          height: 10px;
+          background-color: #b2b7bc;
+          margin-right: 10px;
+        }
+
+        .name2{
+          margin-left: 10px;
+        }
+      }
+
+      .importInput{
+        border-radius: 6px;
+        font-size: 0;
+        zoom: 1;
+      }
+
+      .commentFooterBtn{
+        margin-top: 10px;
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+      }
+
+      .commentItemActive{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background-color: #ffbe2f;
+       }
+
+
+       .userInfo{
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        padding: 6px 0;
+
+        .avatar{
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          margin-right: 10px;
+          overflow: hidden;
+          img{
+            width: 100%;
+            height: 100%;
+
+          }
+        }
+
+        .userContent{
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          color: #1f2329;
+          font-size: 12px;
+
+          .head{
+            display: flex;
+            align-items: center;
+          }
+        }
+       }
+     }
+
+
+  }
+}
+
+.tranformX295{
+  transform: translateX(295px)
+} 
+.tranformX40{
+  transform: translateX(40px)
+}
+
+.open{
+  position: absolute;
+  top: 10px;
+  right: 0;
+  width: 40px;
+  height: 36px;
+  display: flex;
+  visibility: visible;
+  justify-content: center;
+  align-items: center;
+  border-top-left-radius: 50%;
+  border-bottom-left-radius: 50%;
+  transition: transform 0.3s ease 0s;
+  cursor: pointer;
+  pointer-events: all;
+  border: 1px solid #dddede;
+  background-color: white;
+  z-index: 3;
+}
+
+
+.containerItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 2px;
+  border: 1px solid #c5cae9;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+
+.importText{
+  padding: 2px;
+  border-radius: 8px;
+  color: inherit;
+  background-color: transparent;
+  outline: none;
+  .importTextAction{
+    background-color: #3b82f6;
+  }
+}
+
+.saveBtn{
+  border-radius: 4px;
+  background-color: #2955e7;
+  padding: 2.5px 1.5px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #fff;
+  transition: background-color 0.2s ease-in-out;
+
+  &:hover {
+    background-color: #426beb ;
+  }
+}
+
+.notComment{
+  padding-top: 2rem;
+  text-align: center;
+  color: #a0aec0;
+}
+
+.bubbleMenu{
+  border: 1px solid #a0aec0;
+  border-radius: 0.5rem;
+  .bubbleBtn{
+    border-radius: 4px;
+    background-color: #1c1f23cc;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #fff;
+    transition: background-color 0.2s ease-in-out;
+    background-color: white;
+    color:#333;
+    padding: 5px 10px;
+    border: 1px solid #dddede;
+  
+  
+    &:hover {
+      background-color: #ededee ;
+      
+    }
+  }
+}

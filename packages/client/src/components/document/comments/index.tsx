@@ -17,7 +17,6 @@ import styles from './index.module.scss';
 interface IProps {
   documentId: string;
 }
-
 const { Text, Paragraph } = Typography;
 
 export const CommentEditor: React.FC<IProps> = ({ documentId }) => {

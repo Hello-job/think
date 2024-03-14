@@ -2,15 +2,18 @@ import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo
 
 import { BackTop, Toast } from '@douyinfe/semi-ui';
 
+import StarterKit from '@tiptap/starter-kit';
 import { EditorContent, useEditor } from 'tiptap/core';
 import { Collaboration } from 'tiptap/core/extensions/collaboration';
 import { CollaborationCursor } from 'tiptap/core/extensions/collaboration-cursor';
+import { CommentExtension as Comment } from 'tiptap/core/extensions/comment';
 import { Tocs } from 'tiptap/editor/tocs';
 
 import { HocuspocusProvider } from '@hocuspocus/provider';
 import cls from 'classnames';
 import { Banner } from 'components/banner';
 import { CommentEditor } from 'components/document/comments';
+import { CompentEditExtension } from 'components/document/comments-extension';
 import { ImageViewer } from 'components/image-viewer';
 import { LogoName } from 'components/logo';
 import { getRandomColor } from 'helpers/color';
@@ -47,11 +50,37 @@ export const EditorInstance = forwardRef((props: IProps, ref) => {
     renderInEditorPortal,
     onTitleUpdate,
   } = props;
+
   const $headerContainer = useRef<HTMLDivElement>();
   const $mainContainer = useRef<HTMLDivElement>();
   const { isMobile } = IsOnMobile.useHook();
   const { online } = useNetwork();
   const [created, toggleCreated] = useToggle(false);
+  const [activeCommentId, setActiveCommentId] = useState<string | null>(null);
+
+  const commentsSectionRef = useRef<HTMLDivElement | null>(null);
+
+  const focusCommentWithActiveId = (id: string) => {
+    if (!commentsSectionRef.current) return;
+
+    const commentInput = commentsSectionRef.current.querySelector<HTMLInputElement>(`input#${id}`);
+
+    if (!commentInput) return;
+
+    commentInput.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+      inline: 'center',
+    });
+  };
+
+  const commentProps = {
+    activeCommentId,
+    setActiveCommentId,
+    commentsSectionRef,
+    focusCommentWithActiveId,
+  };
+
   const editor = useEditor(
     {
       editable,
@@ -62,6 +91,8 @@ export const EditorInstance = forwardRef((props: IProps, ref) => {
           class: 'is-withauthor',
         },
       },
+
+      // @ts-ignore
       extensions: [
         ...CollaborationKit,
         Collaboration.configure({
@@ -74,6 +105,17 @@ export const EditorInstance = forwardRef((props: IProps, ref) => {
               name: '访客',
             }),
             color: getRandomColor(),
+          },
+        }),
+        StarterKit,
+        Comment.configure({
+          HTMLAttributes: {
+            class: 'my-comment',
+          },
+          onCommentActivated: (commentId) => {
+            setActiveCommentId(commentId);
+
+            if (commentId) setTimeout(() => focusCommentWithActiveId(commentId));
           },
         }),
       ].filter(Boolean),
@@ -187,7 +229,6 @@ export const EditorInstance = forwardRef((props: IProps, ref) => {
           <MenuBar editor={editor} />
         </header>
       )}
-
       <main
         ref={$mainContainer}
         id={'js-tocs-container'}
@@ -218,6 +259,7 @@ export const EditorInstance = forwardRef((props: IProps, ref) => {
         style={{ right: isMobile ? 16 : 36, bottom: 65 }}
         visibilityHeight={200}
       />
+      <CompentEditExtension commentProps={commentProps} editor={editor} />
     </>
   );
 });
