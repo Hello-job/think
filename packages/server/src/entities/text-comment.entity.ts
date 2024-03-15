@@ -5,8 +5,11 @@ export class TextCommentEntity {
   @PrimaryGeneratedColumn('uuid')
   public id: string;
 
+  @Column({ type: 'varchar', length: 100, comment: '文本id' })
+  public textId: string;
+
   @Column({ type: 'varchar', length: 100, comment: '文档id' })
-  public wikiId: string;
+  public documentId: string;
 
   @Column({ type: 'varchar', length: 500, comment: '文本内容' })
   public text: string;

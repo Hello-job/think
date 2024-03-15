@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
 import { IconComment, IconDoubleChevronRight } from '@douyinfe/semi-icons';
 import { Button, Input } from '@douyinfe/semi-ui';
@@ -6,8 +6,10 @@ import { Button, Input } from '@douyinfe/semi-ui';
 import { ILoginUser, IUser } from '@think/domains';
 
 import Comment from '@sereneinserenade/tiptap-comment-extension';
-import { BubbleMenu, EditorContent, JSONContent, useEditor } from '@tiptap/react';
+import { BubbleMenu } from '@tiptap/react';
 
+import { useTextCommentReply } from 'data/text.comment-reply';
+import { useTextComment } from 'data/text-comment';
 import { useUser } from 'data/user';
 import { v4 } from 'uuid';
 
@@ -49,12 +51,16 @@ const getSelectText = (id) => {
       return textContent;
     }
   }
-
   return text;
 };
 
 export const CompentEditExtension = ({ editor, commentProps }) => {
-  const { activeCommentId, setActiveCommentId, commentsSectionRef, focusCommentWithActiveId } = commentProps;
+  const { activeCommentId, setActiveCommentId, commentsSectionRef, focusCommentWithActiveId, documentId } =
+    commentProps;
+
+  const { data = [], createTextComment, refetchTextComments } = useTextComment(documentId);
+  const { createTextCommentReply, editTextCommentReply } = useTextCommentReply();
+
   const { user } = useUser();
   const [foldStatus, setFoldStatus] = useState<boolean>(false);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -69,6 +75,10 @@ export const CompentEditExtension = ({ editor, commentProps }) => {
   };
 
   useEffect(() => {
+    setComments(data as Comment[]);
+  }, [data]);
+
+  useEffect(() => {
     if (!activeCommentId) return;
     focusCommentWithActiveId(activeCommentId);
   }, [activeCommentId, focusCommentWithActiveId]);
@@ -78,7 +88,10 @@ export const CompentEditExtension = ({ editor, commentProps }) => {
     content: '',
   };
 
-  const setComment = (value) => {
+  /**
+   * 创建评论
+   */
+  const setComment = () => {
     const newComment = getNewComment('', '');
 
     editor?.commands.setComment(newComment.id);
@@ -94,6 +107,40 @@ export const CompentEditExtension = ({ editor, commentProps }) => {
     setTimeout(focusCommentWithActiveId);
   };
 
+  /**
+   * 创建文本会话
+   */
+  const handleCreateTextConverses = useCallback(
+    (data: { text: string; textId: string }) => {
+      return createTextComment({ ...data, documentId });
+    },
+    [documentId, createTextComment]
+  );
+
+  /**
+   * 创建文本评论
+   */
+  const handleCreateTextCommentReply = useCallback(
+    ({ content, textId }) => {
+      createTextCommentReply({ content, userId: user.id, textId }).then((res) => {
+        refetchTextComments();
+      });
+    },
+    [user.id, createTextCommentReply, refetchTextComments]
+  );
+
+  /**
+   * 更改回复信息
+   */
+  const handleReplyChange = useCallback(
+    async (data: { content: string; id: number }) => {
+      const res = await editTextCommentReply(data);
+      refetchTextComments();
+      return res;
+    },
+    [editTextCommentReply, refetchTextComments]
+  );
+
   return (
     <div className={styles.commentWrap}>
       <div className={`${styles.open} ${!foldStatus && styles.tranformX40}`} onClick={() => setFoldStatus(false)}>
@@ -104,7 +151,11 @@ export const CompentEditExtension = ({ editor, commentProps }) => {
           <>
             <div className={styles.header}>
               <span>评论({comments.length})</span>
-              <IconDoubleChevronRight className={styles.foldIcon} onClick={() => setFoldStatus(true)} />
+              <IconDoubleChevronRight
+                key="commentIcon"
+                className={styles.foldIcon}
+                onClick={() => setFoldStatus(true)}
+              />
             </div>
             <section className={`${styles.container} `} ref={commentsSectionRef}>
               {comments.length ? (
@@ -114,9 +165,12 @@ export const CompentEditExtension = ({ editor, commentProps }) => {
                     comment={comment}
                     activeCommentId={activeCommentId}
                     comments={comments}
-                    setComments={setComments}
                     setActiveCommentId={setActiveCommentId}
                     editor={editor}
+                    setComments={setComments}
+                    onCreateTextComment={handleCreateTextConverses}
+                    onCreateCommentReply={handleCreateTextCommentReply}
+                    onCommentChange={handleReplyChange}
                   />
                 ))
               ) : (

@@ -62,19 +62,18 @@ export const EditorInstance = forwardRef((props: IProps, ref) => {
 
   const focusCommentWithActiveId = (id: string) => {
     if (!commentsSectionRef.current) return;
+    // const commentInput = commentsSectionRef.current?.querySelector<HTMLInputElement>(`input#${id}`);
 
-    const commentInput = commentsSectionRef.current.querySelector<HTMLInputElement>(`input#${id}`);
+    // if (!commentInput) return;
 
-    if (!commentInput) return;
-
-    commentInput.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center',
-      inline: 'center',
-    });
+    // commentInput.scrollIntoView({
+    //   behavior: 'smooth',
+    //   block: 'center',
+    //   inline: 'center',
+    // });
   };
-
   const commentProps = {
+    documentId,
     activeCommentId,
     setActiveCommentId,
     commentsSectionRef,

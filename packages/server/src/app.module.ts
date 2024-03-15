@@ -14,6 +14,8 @@ import { OrganizationEntity } from '@entities/organization.entity';
 import { StarEntity } from '@entities/star.entity';
 import { SystemEntity } from '@entities/system.entity';
 import { TemplateEntity } from '@entities/template.entity';
+import { TextCommentEntity } from '@entities/text-comment.entity';
+import { TextCommentReplyEntity } from '@entities/text-comment-reply.entity';
 import { UserEntity } from '@entities/user.entity';
 import { WikiEntity } from '@entities/wiki.entity';
 import { IS_PRODUCTION } from '@helpers/env.helper';
@@ -27,6 +29,8 @@ import { OrganizationModule } from '@modules/organization.module';
 import { StarModule } from '@modules/star.module';
 import { SystemModule } from '@modules/system.module';
 import { TemplateModule } from '@modules/template.module';
+import { TextCommentModule } from '@modules/text-comment.module';
+import { TextCommentReplyModule } from '@modules/text-comment-reply.module';
 import { UserModule } from '@modules/user.module';
 import { VerifyModule } from '@modules/verify.module';
 import { ViewModule } from '@modules/view.module';
@@ -46,6 +50,8 @@ const ENTITIES = [
   MessageEntity,
   TemplateEntity,
   SystemEntity,
+  TextCommentEntity,
+  TextCommentReplyEntity,
 ];
 
 const MODULES = [
@@ -62,6 +68,8 @@ const MODULES = [
   ViewModule,
   VerifyModule,
   SystemModule,
+  TextCommentModule,
+  TextCommentReplyModule,
 ];
 
 @Module({

@@ -1,12 +1,12 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('text_comment_reply')
-export class TextCommentEntity {
+export class TextCommentReplyEntity {
   @PrimaryGeneratedColumn()
   public id: string;
 
   @Column({ type: 'varchar', length: 100, comment: '文本评论id' })
-  public: string;
+  public textId: string;
 
   @Column({ type: 'varchar', length: 500, comment: '回复内容' })
   public content: string;

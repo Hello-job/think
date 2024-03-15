@@ -8,3 +8,5 @@ export * from './comment';
 export * from './star';
 export * from './organization';
 export * from './system';
+export * from './text-comment';
+export * from './text-comment-reply';

@@ -20,3 +20,5 @@ __exportStar(require("./comment"), exports);
 __exportStar(require("./star"), exports);
 __exportStar(require("./organization"), exports);
 __exportStar(require("./system"), exports);
+__exportStar(require("./text-comment"), exports);
+__exportStar(require("./text-comment-reply"), exports);
