@@ -59,22 +59,24 @@ export const EditorInstance = forwardRef((props: IProps, ref) => {
   const [activeCommentId, setActiveCommentId] = useState<string | null>(null);
 
   const commentsSectionRef = useRef<HTMLDivElement | null>(null);
+  const [foldStatus, setFoldStatus] = useState<boolean>(true);
 
-  const focusCommentWithActiveId = (id: string) => {
-    if (!commentsSectionRef.current) return;
-    // const commentInput = commentsSectionRef.current?.querySelector<HTMLInputElement>(`input#${id}`);
+  const focusCommentWithActiveId = useCallback(
+    (id: string) => {
+      if (!commentsSectionRef.current) return;
+      const commentInput = commentsSectionRef.current?.querySelector<HTMLInputElement>(`div#${id}`);
 
-    // if (!commentInput) return;
+      if (!commentInput) return;
+      setFoldStatus(false);
+    },
+    [commentsSectionRef]
+  );
 
-    // commentInput.scrollIntoView({
-    //   behavior: 'smooth',
-    //   block: 'center',
-    //   inline: 'center',
-    // });
-  };
   const commentProps = {
     documentId,
     activeCommentId,
+    foldStatus,
+    setFoldStatus,
     setActiveCommentId,
     commentsSectionRef,
     focusCommentWithActiveId,
@@ -258,7 +260,7 @@ export const EditorInstance = forwardRef((props: IProps, ref) => {
         style={{ right: isMobile ? 16 : 36, bottom: 65 }}
         visibilityHeight={200}
       />
-      <CompentEditExtension commentProps={commentProps} editor={editor} />
+      <CompentEditExtension key="CompentEditExtension" commentProps={commentProps} menubar={menubar} editor={editor} />
     </>
   );
 });

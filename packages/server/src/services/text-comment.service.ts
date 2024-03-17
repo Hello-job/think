@@ -17,7 +17,7 @@ export class TextCommentService {
   ) {}
 
   /**
-   * 获取文本评论
+   * 获取文本会话
    * @param documentId
    * @returns
    */
@@ -28,15 +28,21 @@ export class TextCommentService {
     const textComments = await this.textCommentRepo.find({
       documentId,
     });
-    return await Promise.all(
-      textComments.map(async (item) => {
-        const comments = await this.textCommentReplyService.getTextCommentReply(item.id);
-        return {
+    const batchs = [];
+    for (const item of textComments) {
+      const comments = await this.textCommentReplyService.getTextCommentReply(item.textId);
+      if (comments.length === 0) {
+        await this.textCommentRepo.delete({ id: item.id });
+      }
+      if (comments.length > 0) {
+        batchs.push({
           ...item,
           replies: comments,
-        };
-      })
-    );
+        });
+      }
+    }
+
+    return await Promise.all(batchs);
   }
 
   /**

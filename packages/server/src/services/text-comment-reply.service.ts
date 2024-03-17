@@ -59,11 +59,10 @@ export class TextCommentReplyService {
   async editTextCommentReply(replyInfo: { id: string; content: string }) {
     const { id, content } = replyInfo;
     const reply = await this.textCommentReplyRepo.findOne({ id });
-
-    const res = this.textCommentReplyRepo.merge(reply, {
+    const res = await this.textCommentReplyRepo.merge(reply, {
       content,
     });
-
+    await this.textCommentReplyRepo.save(res);
     return res;
   }
 
@@ -74,7 +73,6 @@ export class TextCommentReplyService {
    */
   async deleteTextCommentReply(replyId: string) {
     const res = await this.textCommentReplyRepo.delete({ id: replyId });
-
     return res;
   }
 }

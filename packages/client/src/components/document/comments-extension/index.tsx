@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 
 import { IconComment, IconDoubleChevronRight } from '@douyinfe/semi-icons';
 import { Button, Input } from '@douyinfe/semi-ui';
@@ -13,7 +13,7 @@ import { useTextComment } from 'data/text-comment';
 import { useUser } from 'data/user';
 import { v4 } from 'uuid';
 
-import { CommentItem } from './item';
+import { TextConversation } from './text-conversation';
 
 import styles from './index.module.scss';
 
@@ -26,6 +26,7 @@ interface Replies {
 
 interface Comment {
   id: string;
+  textId?: string;
   replies: Replies[];
   createdAt: Date;
   text: string;
@@ -54,15 +55,22 @@ const getSelectText = (id) => {
   return text;
 };
 
-export const CompentEditExtension = ({ editor, commentProps }) => {
-  const { activeCommentId, setActiveCommentId, commentsSectionRef, focusCommentWithActiveId, documentId } =
-    commentProps;
+export const CompentEditExtension = ({ editor, menubar, commentProps }) => {
+  const {
+    activeCommentId,
+    foldStatus,
+    setFoldStatus,
+    setActiveCommentId,
+    commentsSectionRef,
+    focusCommentWithActiveId,
+    documentId,
+  } = commentProps;
+  console.log('>>>>>foldStatus', foldStatus);
 
   const { data = [], createTextComment, refetchTextComments } = useTextComment(documentId);
-  const { createTextCommentReply, editTextCommentReply } = useTextCommentReply();
+  const { createTextCommentReply, editTextCommentReply, deleteTextCommentReply } = useTextCommentReply();
 
   const { user } = useUser();
-  const [foldStatus, setFoldStatus] = useState<boolean>(false);
   const [comments, setComments] = useState<Comment[]>([]);
 
   const getNewComment = (content: string, text = ''): Comment => {
@@ -82,6 +90,20 @@ export const CompentEditExtension = ({ editor, commentProps }) => {
     if (!activeCommentId) return;
     focusCommentWithActiveId(activeCommentId);
   }, [activeCommentId, focusCommentWithActiveId]);
+
+  useEffect(() => {
+    // 获取所有 class 为 "my-comment" 的元素
+    const comments = document.getElementsByClassName('my-comment');
+    // 遍历所有元素，找到 data-comment-id 匹配的元素
+    for (const comment of comments) {
+      if ((comment as HTMLElement).dataset.commentId === activeCommentId) {
+        // 获取文本内容
+        (comment as HTMLElement).classList.add('my-comment-active');
+      } else {
+        (comment as HTMLElement).classList.remove('my-comment-active');
+      }
+    }
+  }, [activeCommentId]);
 
   const defaultReplies = {
     user,
@@ -141,9 +163,25 @@ export const CompentEditExtension = ({ editor, commentProps }) => {
     [editTextCommentReply, refetchTextComments]
   );
 
+  /**
+   * 删除单条评论
+   */
+  const handleDeleteReply = useCallback(
+    async (id) => {
+      await deleteTextCommentReply(id);
+      refetchTextComments();
+    },
+    [deleteTextCommentReply, refetchTextComments]
+  );
+
   return (
-    <div className={styles.commentWrap}>
-      <div className={`${styles.open} ${!foldStatus && styles.tranformX40}`} onClick={() => setFoldStatus(false)}>
+    <div className={styles.commentWrap} style={{ top: menubar ? '110px' : 0 }} ref={commentsSectionRef}>
+      <div
+        className={`${styles.open} ${!foldStatus && styles.tranformX40}`}
+        onClick={() => {
+          setFoldStatus(false);
+        }}
+      >
         <IconComment />
       </div>
       <div className={`${styles.textComment} ${foldStatus && styles.tranformX295}`}>
@@ -157,11 +195,11 @@ export const CompentEditExtension = ({ editor, commentProps }) => {
                 onClick={() => setFoldStatus(true)}
               />
             </div>
-            <section className={`${styles.container} `} ref={commentsSectionRef}>
+            <section className={`${styles.container} `}>
               {comments.length ? (
                 comments.map((comment) => (
-                  <CommentItem
-                    key={comment.id}
+                  <TextConversation
+                    key={comment.textId}
                     comment={comment}
                     activeCommentId={activeCommentId}
                     comments={comments}
@@ -171,6 +209,7 @@ export const CompentEditExtension = ({ editor, commentProps }) => {
                     onCreateTextComment={handleCreateTextConverses}
                     onCreateCommentReply={handleCreateTextCommentReply}
                     onCommentChange={handleReplyChange}
+                    onDeleteReply={handleDeleteReply}
                   />
                 ))
               ) : (
