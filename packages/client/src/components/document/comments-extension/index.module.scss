@@ -215,7 +215,6 @@
 }
 
 .bubbleMenu{
-  border: 1px solid #a0aec0;
   border-radius: 0.5rem;
   .bubbleBtn{
     border-radius: 4px;
@@ -228,6 +227,7 @@
     color:#333;
     padding: 5px 10px;
     border: 1px solid #dddede;
+    cursor: pointer;
   
   
     &:hover {
@@ -236,3 +236,4 @@
     }
   }
 }
+

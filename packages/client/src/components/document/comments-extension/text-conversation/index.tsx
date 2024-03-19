@@ -43,23 +43,26 @@ export const TextConversation = ({
     setActiveCommentId(null);
   }, [setCommentValue, setActiveCommentId]);
 
-  const handleAdd = useCallback(() => {
-    const findItem = comments.find((item) => [item.id, item.textId].includes(activeCommentId));
-
-    const isAdd = findItem.replies.length === 1 && !findItem.replies[0].content;
-    if (isAdd) {
-      onCreateTextComment({
-        text: findItem.text,
-        textId: findItem.id,
-      }).then((res) => {
-        onCreateCommentReply({ content: commentValue, textId: res.textId });
-      });
-    } else {
-      onCreateCommentReply({ content: commentValue, textId: findItem.textId });
-    }
-    init();
-    editor.commands.focus();
-  }, [commentValue, comments, editor.commands, activeCommentId, onCreateTextComment, onCreateCommentReply, init]);
+  const handleAdd = useCallback(
+    (value) => {
+      const findItem = comments.find((item) => [item.id, item.textId].includes(activeCommentId));
+      const content = value || commentValue;
+      const isAdd = findItem.replies.length === 1 && !findItem.replies[0].content;
+      if (isAdd) {
+        onCreateTextComment({
+          text: findItem.text,
+          textId: findItem.id,
+        }).then((res) => {
+          onCreateCommentReply({ content, textId: res.textId });
+        });
+      } else {
+        onCreateCommentReply({ content, textId: findItem.textId });
+      }
+      init();
+      editor.commands.focus();
+    },
+    [commentValue, comments, editor.commands, activeCommentId, onCreateTextComment, onCreateCommentReply, init]
+  );
 
   const handleItemChange = useCallback(() => {
     onCommentChange({
@@ -72,13 +75,16 @@ export const TextConversation = ({
   /**
    * @description 保存回复
    */
-  const handleSave = useCallback(() => {
-    if (status === 'add') {
-      handleAdd();
-    } else {
-      handleItemChange();
-    }
-  }, [status, handleAdd, handleItemChange]);
+  const handleSave = useCallback(
+    (value) => {
+      if (status === 'add') {
+        handleAdd(value);
+      } else {
+        handleItemChange();
+      }
+    },
+    [status, handleAdd, handleItemChange]
+  );
 
   /**
    * @description 取消回复
@@ -90,9 +96,15 @@ export const TextConversation = ({
   /**
    * @description 回复评论
    */
-  const handleReply = useCallback(() => {
-    setActiveCommentId(comment.textId);
-  }, [comment.textId, setActiveCommentId]);
+  const handleReply = useCallback(
+    (item) => {
+      setActiveCommentId(comment.textId);
+      setCommentValue(
+        `<span class="comment-member" contenteditable="false" data-name="undefined">@${item.user.name}</span>&nbsp;`
+      );
+    },
+    [comment.textId, setActiveCommentId, setCommentValue]
+  );
 
   const handleEdit = useCallback(
     (data) => {
@@ -120,10 +132,13 @@ export const TextConversation = ({
   /**
    * 键盘事件
    */
-  const handleKeyDown = useCallback(() => {
-    setActiveCommentId(null);
-    handleSave();
-  }, [handleSave, setActiveCommentId]);
+  const handleKeyDown = useCallback(
+    (value) => {
+      setActiveCommentId(null);
+      handleSave(value);
+    },
+    [handleSave, setActiveCommentId]
+  );
 
   const active = [comment.id, comment.textId].includes(activeCommentId);
 
@@ -136,7 +151,16 @@ export const TextConversation = ({
       </span>
       {comment.replies?.map((item) => {
         return (
-          <CommentItem key={item.id} data={item} onReply={handleReply} onEdit={handleEdit} onDelete={handleDelete} />
+          <CommentItem
+            key={item.id}
+            data={item}
+            editor={editor}
+            onReply={() => {
+              handleReply(item);
+            }}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
         );
       })}
       {active && (
@@ -147,6 +171,7 @@ export const TextConversation = ({
           onKeyDown={handleKeyDown}
           onCancel={handleCancel}
           onOk={handleSave}
+          editor={editor}
         />
       )}
     </div>

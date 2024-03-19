@@ -17,6 +17,15 @@
   background-color: #faedc2;
 }
 
+.comment-member{
+  padding: 2px 6px;
+  color: white;
+  background-color: #0059f9;
+  border-radius: 20px;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
 @media (max-width: 768px) {
   .container {
     width: 100%;

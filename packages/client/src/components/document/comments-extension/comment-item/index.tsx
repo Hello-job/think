@@ -8,7 +8,7 @@ import { timeConverter } from 'helpers/url';
 import { CommentInput } from '../comment-input';
 
 import styles from '../text-conversation/index.module.scss';
-const CommentItem = ({ data, onReply, onEdit, onDelete }) => {
+const CommentItem = ({ data, editor, onReply, onEdit, onDelete }) => {
   const [visible, setVisible] = useState(false);
   const [value, setValue] = useState(data.content);
   const handleCancel = () => {
@@ -20,7 +20,7 @@ const CommentItem = ({ data, onReply, onEdit, onDelete }) => {
     setValue(val);
   };
 
-  const handleKeyDown = () => {
+  const handleKeyDown = (value) => {
     onEdit({
       content: value,
       id: data.id,
@@ -28,7 +28,7 @@ const CommentItem = ({ data, onReply, onEdit, onDelete }) => {
     setVisible(false);
   };
 
-  const handleSave = async () => {
+  const handleSave = async (value) => {
     await onEdit({
       content: value,
       id: data.id,
@@ -73,13 +73,16 @@ const CommentItem = ({ data, onReply, onEdit, onDelete }) => {
               </Dropdown>
             </div>
           </div>
-          <div className={styles.content}>{data.content}</div>
+          <div className={styles.content} dangerouslySetInnerHTML={{ __html: data.content }}>
+            {/* {} */}
+          </div>
         </div>
       </div>
       {visible && (
         <CommentInput
           activeId={data.id}
           value={value}
+          editor={editor}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           onCancel={handleCancel}

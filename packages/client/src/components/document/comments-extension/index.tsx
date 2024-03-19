@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { IconComment, IconDoubleChevronRight } from '@douyinfe/semi-icons';
-import { Button, Input } from '@douyinfe/semi-ui';
 
-import { ILoginUser, IUser } from '@think/domains';
+import { ILoginUser } from '@think/domains';
 
 import Comment from '@sereneinserenade/tiptap-comment-extension';
 import { BubbleMenu } from '@tiptap/react';
@@ -65,7 +64,6 @@ export const CompentEditExtension = ({ editor, menubar, commentProps }) => {
     focusCommentWithActiveId,
     documentId,
   } = commentProps;
-  console.log('>>>>>foldStatus', foldStatus);
 
   const { data = [], createTextComment, refetchTextComments } = useTextComment(documentId);
   const { createTextCommentReply, editTextCommentReply, deleteTextCommentReply } = useTextCommentReply();
@@ -184,7 +182,7 @@ export const CompentEditExtension = ({ editor, menubar, commentProps }) => {
       >
         <IconComment />
       </div>
-      <div className={`${styles.textComment} ${foldStatus && styles.tranformX295}`}>
+      <div id="commentContent" className={`${styles.textComment} ${foldStatus && styles.tranformX295}`}>
         {editor && (
           <>
             <div className={styles.header}>
